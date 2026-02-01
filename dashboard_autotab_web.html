@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard Ejecutivo de Cartera y Cobros - AUTOTAB SA DE CV">
+    <title>Dashboard AUTOTAB - Cartera y Cobros</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+    <script src="https://unpkg.com/lucide-react@0.263.1/dist/umd/lucide-react.js"></script>
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        const { BarChart, Bar, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+        const { DollarSign, Users, MapPin, User, Calendar, Activity, AlertTriangle, CheckCircle, Clock, BarChart3, Receipt, FileText } = lucideReact;
+
+        const App = () => {
+          const [vista, setVista] = useState('general');
+          const [plazaSelec, setPlazaSelec] = useState('MBC VSA');
+
+          const datos = {
+            fecha: '31 de Enero de 2026',
+            resumen: { total_cartera: 92537662, total_anticipos: 7106555, total_clientes_cartera: 174, total_cobros_mov: 1300, total_cobros_clientes: 581, total_cobros_importe: 52036434, por_vencer: 60976530, vencido: 31561132 },
+            plazas: [
+              { codigo: 'MBC VSA', nombre: 'VILLAHERMOSA', total: 46211380, clientes: 83, movimientos: 1168, por_vencer: 36446034, dias_0_30: 3247174, dias_31_60: 729700, dias_61_90: 911357, dias_91_120: 325622, dias_121_180: 167670, dias_mas_180: 4383823, pct_vencido: 21.1, dias_promedio: 33, cobros_mov: 694, cobros_clientes: 289, cobros_importe: 29542803 },
+              { codigo: 'MBC MID', nombre: 'MERIDA', total: 23723764, clientes: 72, movimientos: 958, por_vencer: 15854375, dias_0_30: 2561902, dias_31_60: 1253780, dias_61_90: 742897, dias_91_120: 667772, dias_121_180: 1214841, dias_mas_180: 1428197, pct_vencido: 33.2, dias_promedio: 37, cobros_mov: 298, cobros_clientes: 149, cobros_importe: 14043460 },
+              { codigo: 'MBC CUN', nombre: 'CANCUN', total: 21292129, clientes: 49, movimientos: 1089, por_vencer: 12710911, dias_0_30: 3676781, dias_31_60: 593321, dias_61_90: 669900, dias_91_120: 698985, dias_121_180: 2067158, dias_mas_180: 875073, pct_vencido: 40.3, dias_promedio: 21, cobros_mov: 250, cobros_clientes: 140, cobros_importe: 8053790 },
+              { codigo: 'MBC CAMP ', nombre: 'CAMPECHE', total: 1310389, clientes: 11, movimientos: 101, por_vencer: 1011975, dias_0_30: 196535, dias_31_60: 97648, dias_61_90: 0, dias_91_120: 0, dias_121_180: 0, dias_mas_180: 4230, pct_vencido: 22.8, dias_promedio: -17, cobros_mov: 56, cobros_clientes: 31, cobros_importe: 394180 }
+            ],
+            topAgentes: [
+              { nombre: 'Fabiola Cristel Mirabal Perez', plaza: 'VILLAHERMOSA', total: 21662925, clientes: 5, pct_vencido: 0.0 },
+              { nombre: 'MIGUEL FLORES REYES', plaza: 'VILLAHERMOSA', total: 7849929, clientes: 4, pct_vencido: 33.6 },
+              { nombre: 'EDMUNDO DE LA TORRE ALANIZ', plaza: 'CANCUN', total: 4232657, clientes: 4, pct_vencido: 67.7 },
+              { nombre: 'JESUS SALVADOR BOJORQUEZ NAVARRO', plaza: 'MERIDA', total: 4143044, clientes: 21, pct_vencido: 63.7 },
+              { nombre: 'ELIEZER HERNANDEZ SANCHEZ', plaza: 'VILLAHERMOSA', total: 3974552, clientes: 12, pct_vencido: 18.3 },
+              { nombre: 'RENAN CEBALLOS ARAUJO', plaza: 'MERIDA', total: 3822664, clientes: 2, pct_vencido: 0.0 },
+              { nombre: 'CARLOS MARIO DORANTES SEVILLA', plaza: 'CANCUN', total: 2785998, clientes: 1, pct_vencido: 0.0 },
+              { nombre: 'MANUEL A. CONTRERAS GARCIA', plaza: 'MERIDA', total: 2586800, clientes: 1, pct_vencido: 0.0 },
+              { nombre: 'Henry Eliseo Moo Can', plaza: 'CANCUN', total: 2132003, clientes: 1, pct_vencido: 75.6 },
+              { nombre: 'Limbeer Manuel Ruíz Álvarez', plaza: 'CANCUN', total: 2091933, clientes: 10, pct_vencido: 36.4 }
+            ],
+            rotacion: [
+              { mes: 'Ene', valor: 33.87 }, { mes: 'Feb', valor: 40.48 }, { mes: 'Mar', valor: 35.85 },
+              { mes: 'Abr', valor: 32.73 }, { mes: 'May', valor: 40.77 }, { mes: 'Jun', valor: 42.39 },
+              { mes: 'Jul', valor: 38.64 }, { mes: 'Ago', valor: 37.05 }, { mes: 'Sep', valor: 50.68 },
+              { mes: 'Oct', valor: 37.75 }, { mes: 'Nov', valor: 40.88 }, { mes: 'Dic', valor: 40.76 }
+            ]
+          };
+
+          const plaza = datos.plazas.find(p => p.codigo === plazaSelec) || datos.plazas[0];
+          const datosMora = [
+            { periodo: 'Por vencer', saldo: plaza.por_vencer, color: '#10b981' },
+            { periodo: '0-30', saldo: plaza.dias_0_30, color: '#3b82f6' },
+            { periodo: '31-60', saldo: plaza.dias_31_60, color: '#f59e0b' },
+            { periodo: '61-90', saldo: plaza.dias_61_90, color: '#ec4899' },
+            { periodo: '91-120', saldo: plaza.dias_91_120, color: '#8b5cf6' },
+            { periodo: '121-180', saldo: plaza.dias_121_180, color: '#ef4444' },
+            { periodo: '+180', saldo: plaza.dias_mas_180, color: '#991b1b' }
+          ];
+
+          const fmt = (v) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', minimumFractionDigits: 0 }).format(v);
+          const fmtN = (v) => new Intl.NumberFormat('es-MX').format(Math.round(v));
+
+          const KPI = ({ icon: Icon, titulo, valor, sub, color }) => (
+            <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 hover:shadow-xl transition" style={{ borderLeftColor: color }}>
+              <div className="flex justify-between">
+                <div className="flex-1">
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-2">{titulo}</p>
+                  <p className="text-3xl font-extrabold text-gray-900 mb-1">{valor}</p>
+                  {sub && <p className="text-sm text-gray-600 font-medium">{sub}</p>}
+                </div>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: color + '20' }}>
+                  <Icon className="w-6 h-6" style={{ color }} />
+                </div>
+              </div>
+            </div>
+          );
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+              <div className="max-w-7xl mx-auto">
+                
+                <div className="bg-white rounded-3xl p-10 shadow-2xl mb-6">
+                  <div className="flex justify-between items-center flex-wrap gap-4">
+                    <div>
+                      <h1 className="text-6xl font-extrabold bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-700 bg-clip-text text-transparent mb-3">AUTOTAB SA DE CV</h1>
+                      <p className="text-2xl text-gray-700 font-bold">Informe de Cartera y Cobros</p>
+                      <p className="text-lg text-gray-500 font-semibold">al 31 de enero de 2026</p>
+                    </div>
+                    <div className="text-right bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200">
+                      <div className="flex items-center gap-2 justify-end mb-2">
+                        <Calendar className="w-6 h-6 text-blue-600" />
+                        <p className="text-sm font-bold text-gray-600">Fecha de Corte</p>
+                      </div>
+                      <p className="text-3xl font-extrabold text-blue-700">{datos.fecha}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-2 shadow-lg mb-6">
+                  <div className="flex gap-2 overflow-x-auto">
+                    {[
+                      { id: 'general', icon: BarChart3, label: 'Resumen' },
+                      { id: 'plazas', icon: MapPin, label: 'Plazas' },
+                      { id: 'cobros', icon: Receipt, label: 'Cobros' },
+                      { id: 'agentes', icon: User, label: 'Agentes' },
+                      { id: 'rotacion', icon: Activity, label: 'Rotación' }
+                    ].map(({ id, icon: Icon, label }) => (
+                      <button key={id} onClick={() => setVista(id)} className={`flex-1 min-w-max py-3 px-4 rounded-xl font-bold transition flex items-center justify-center gap-2 ${vista === id ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'text-gray-700 hover:bg-gray-100'}`}>
+                        <Icon className="w-5 h-5" />
+                        <span className="text-sm">{label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {vista === 'general' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                      <KPI icon={DollarSign} titulo="Cartera Total" valor={fmt(datos.resumen.total_cartera)} sub="Saldo consolidado" color="#2563eb" />
+                      <KPI icon={Activity} titulo="Anticipos" valor={fmt(datos.resumen.total_anticipos)} sub="Pendientes" color="#10b981" />
+                      <KPI icon={Receipt} titulo="Cobros Procesados" valor={fmt(datos.resumen.total_cobros_importe)} sub={`${fmtN(datos.resumen.total_cobros_mov)} mov.`} color="#f59e0b" />
+                      <KPI icon={CheckCircle} titulo="Por Vencer" valor={((datos.resumen.por_vencer / datos.resumen.total_cartera) * 100).toFixed(1) + '%'} sub={fmt(datos.resumen.por_vencer)} color="#8b5cf6" />
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                      <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                          <MapPin className="w-6 h-6 text-blue-600" />
+                          Cartera por Plaza
+                        </h3>
+                        <ResponsiveContainer width="100%" height={300}>
+                          <BarChart data={datos.plazas}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="nombre" />
+                            <YAxis tickFormatter={(v) => `$${(v/1000000).toFixed(0)}M`} />
+                            <Tooltip formatter={(v) => fmt(v)} />
+                            <Bar dataKey="total" radius={[8, 8, 0, 0]} fill="#2563eb" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h3 className="text-2xl font-bold text-gray-900 mb-6">Estado de Morosidad</h3>
+                        <div className="space-y-4">
+                          {datos.plazas.map((p, i) => (
+                            <div key={i}>
+                              <div className="flex justify-between mb-2">
+                                <span className="font-bold">{p.nombre}</span>
+                                <span className={`font-bold text-sm ${p.pct_vencido < 25 ? 'text-green-600' : p.pct_vencido < 40 ? 'text-yellow-600' : 'text-red-600'}`}>{p.pct_vencido}% vencido</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-3">
+                                <div className={`h-3 rounded-full ${p.pct_vencido < 25 ? 'bg-green-500' : p.pct_vencido < 40 ? 'bg-yellow-500' : 'bg-red-500'}`} style={{ width: `${(p.total / datos.plazas[0].total) * 100}%` }} />
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">{fmt(p.total)} • {p.clientes} clientes</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {vista === 'plazas' && (
+                  <>
+                    <div className="bg-white rounded-2xl p-5 shadow-lg mb-6">
+                      <select value={plazaSelec} onChange={(e) => setPlazaSelec(e.target.value)} className="w-full px-5 py-4 border-2 rounded-xl text-gray-900 font-bold text-lg">
+                        {datos.plazas.map(p => <option key={p.codigo} value={p.codigo}>{p.nombre} - {fmt(p.total)}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                      <KPI icon={DollarSign} titulo="Saldo Total" valor={fmt(plaza.total)} color="#2563eb" />
+                      <KPI icon={Users} titulo="Clientes" valor={fmtN(plaza.clientes)} sub={`${fmtN(plaza.movimientos)} mov.`} color="#10b981" />
+                      <KPI icon={AlertTriangle} titulo="% Vencido" valor={`${plaza.pct_vencido}%`} sub={fmt(plaza.total - plaza.por_vencer)} color={plaza.pct_vencido > 30 ? '#ef4444' : '#f59e0b'} />
+                      <KPI icon={Clock} titulo="Días Promedio" valor={`${plaza.dias_promedio} días`} color={plaza.dias_promedio < 0 ? '#10b981' : '#ef4444'} />
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                      <h3 className="text-2xl font-bold mb-6">Distribución de Morosidad - {plaza.nombre}</h3>
+                      <ResponsiveContainer width="100%" height={350}>
+                        <BarChart data={datosMora}>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="periodo" />
+                          <YAxis tickFormatter={(v) => `$${(v/1000000).toFixed(1)}M`} />
+                          <Tooltip formatter={(v) => fmt(v)} />
+                          <Bar dataKey="saldo" radius={[8, 8, 0, 0]}>
+                            {datosMora.map((e, i) => <Cell key={i} fill={e.color} />)}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </>
+                )}
+
+                {vista === 'cobros' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                      <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 shadow-xl text-white">
+                        <div className="flex gap-3 mb-4">
+                          <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                            <Receipt className="w-7 h-7 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold opacity-90">Total Movimientos</h4>
+                            <p className="text-4xl font-extrabold">{fmtN(datos.resumen.total_cobros_mov)}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl p-6 shadow-xl text-white">
+                        <div className="flex gap-3 mb-4">
+                          <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                            <Users className="w-7 h-7 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold opacity-90">Clientes Atendidos</h4>
+                            <p className="text-4xl font-extrabold">{fmtN(datos.resumen.total_cobros_clientes)}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 shadow-xl text-white">
+                        <div className="flex gap-3 mb-4">
+                          <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center">
+                            <DollarSign className="w-7 h-7 text-white" />
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-bold opacity-90">Importe Cobrado</h4>
+                            <p className="text-3xl font-extrabold">{fmt(datos.resumen.total_cobros_importe)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 shadow-lg overflow-x-auto">
+                      <h3 className="text-2xl font-bold mb-6">Detalle por Plaza</h3>
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-blue-50">
+                            <th className="px-6 py-4 text-left text-xs font-bold text-blue-900 uppercase">Plaza</th>
+                            <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase">Movimientos</th>
+                            <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase">Clientes</th>
+                            <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase">Importe</th>
+                            <th className="px-6 py-4 text-right text-xs font-bold text-blue-900 uppercase">%</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {datos.plazas.map((p, i) => (
+                            <tr key={i} className="border-b hover:bg-blue-50">
+                              <td className="px-6 py-4 font-bold">{p.nombre}</td>
+                              <td className="px-6 py-4 text-right">{fmtN(p.cobros_mov)}</td>
+                              <td className="px-6 py-4 text-right">{fmtN(p.cobros_clientes)}</td>
+                              <td className="px-6 py-4 text-right font-bold text-blue-700">{fmt(p.cobros_importe)}</td>
+                              <td className="px-6 py-4 text-right font-bold text-purple-600">{((p.cobros_importe / datos.resumen.total_cobros_importe) * 100).toFixed(1)}%</td>
+                            </tr>
+                          ))}
+                          <tr className="bg-gray-100 font-bold">
+                            <td className="px-6 py-4">TOTAL</td>
+                            <td className="px-6 py-4 text-right">{fmtN(datos.resumen.total_cobros_mov)}</td>
+                            <td className="px-6 py-4 text-right">{fmtN(datos.resumen.total_cobros_clientes)}</td>
+                            <td className="px-6 py-4 text-right text-blue-700">{fmt(datos.resumen.total_cobros_importe)}</td>
+                            <td className="px-6 py-4 text-right text-purple-600">100.0%</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )}
+
+                {vista === 'agentes' && (
+                  <div className="bg-white rounded-2xl p-6 shadow-lg">
+                    <h3 className="text-3xl font-bold mb-6">Top 10 Agentes por Cartera</h3>
+                    <div className="space-y-4">
+                      {datos.topAgentes.map((a, i) => (
+                        <div key={i} className="bg-gradient-to-r from-white to-blue-50 rounded-xl p-5 border-2 border-blue-100">
+                          <div className="flex items-center gap-4">
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center font-bold text-2xl ${i < 3 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' : 'bg-gray-200 text-gray-700'}`}>{i + 1}</div>
+                            <div className="flex-1">
+                              <div className="flex justify-between mb-2">
+                                <h4 className="font-bold text-lg">{a.nombre}</h4>
+                                <span className="text-2xl font-bold text-blue-700">{fmt(a.total)}</span>
+                              </div>
+                              <div className="flex gap-4 text-sm">
+                                <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full font-bold">{a.plaza}</span>
+                                <span className="text-gray-600">{a.clientes} cliente{a.clientes > 1 ? 's' : ''}</span>
+                                <span className={`font-bold ${a.pct_vencido < 30 ? 'text-green-600' : a.pct_vencido < 60 ? 'text-yellow-600' : 'text-red-600'}`}>{a.pct_vencido}% vencido</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {vista === 'rotacion' && (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                      <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h4 className="text-sm font-bold text-gray-600 mb-2">Rotación Promedio</h4>
+                        <p className="text-5xl font-extrabold text-green-700 mb-2">39.4</p>
+                        <p className="text-sm text-gray-600">días promedio CxC</p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h4 className="text-sm font-bold text-gray-600 mb-2">Mejor Mes</h4>
+                        <p className="text-5xl font-extrabold text-blue-700 mb-2">32.7</p>
+                        <p className="text-sm text-gray-600">Abril</p>
+                      </div>
+                      <div className="bg-white rounded-2xl p-6 shadow-lg">
+                        <h4 className="text-sm font-bold text-gray-600 mb-2">Mes Crítico</h4>
+                        <p className="text-5xl font-extrabold text-red-700 mb-2">50.7</p>
+                        <p className="text-sm text-gray-600">Septiembre</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                      <h3 className="text-2xl font-bold mb-6">Evolución Mensual CxC</h3>
+                      <ResponsiveContainer width="100%" height={400}>
+                        <AreaChart data={datos.rotacion}>
+                          <defs>
+                            <linearGradient id="colorRot" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#2563eb" stopOpacity={0.8}/>
+                              <stop offset="95%" stopColor="#2563eb" stopOpacity={0.1}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="mes" />
+                          <YAxis />
+                          <Tooltip />
+                          <Area type="monotone" dataKey="valor" stroke="#2563eb" strokeWidth={3} fill="url(#colorRot)" name="Días" />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </>
+                )}
+
+                <div className="bg-white rounded-2xl p-5 shadow-lg text-center mt-6">
+                  <p className="text-base text-gray-700 font-bold">AUTOTAB SA DE CV</p>
+                  <p className="text-sm text-gray-600">Dashboard Ejecutivo • 31 de enero de 2026</p>
+                </div>
+
+              </div>
+            </div>
+          );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
